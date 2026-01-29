@@ -1,0 +1,71 @@
+---
+name: zeabur-project-create
+description: Use when creating a new Zeabur project. Use when deploying templates to a new project.
+---
+
+# Zeabur Project Create
+
+## Create Project
+
+```bash
+# Create project with name and region
+npx zeabur@latest project create -n "<project-name>" -r "<region>" -i=false
+
+# Example
+npx zeabur@latest project create -n "my-app" -r "hnd1" -i=false
+```
+
+## Get Project ID
+
+```bash
+# List projects and find ID
+npx zeabur@latest project list -i=false 2>/dev/null | grep "<project-name>"
+
+# Extract ID (first column, strip ANSI codes)
+PROJECT_ID=$(npx zeabur@latest project list -i=false 2>/dev/null | grep "<project-name>" | awk '{print $1}' | sed 's/\x1b\[[0-9;]*m//g')
+```
+
+## Set Context
+
+```bash
+# Set project context for subsequent commands
+npx zeabur@latest context set project --id <project-id> -i=false -y
+```
+
+## Available Regions
+
+| Region | Code |
+|--------|------|
+| Tokyo (Haneda) | `hnd1` |
+| Hong Kong | `hkg1` |
+| Singapore | `sin1` |
+| San Francisco | `sfo1` |
+| Frankfurt | `fra1` |
+| São Paulo | `gru1` |
+
+## Deploy Template to Project
+
+```bash
+# Deploy template file to specific project
+npx zeabur@latest template deploy -f <template-file> --project-id <project-id>
+```
+
+**Note:** Template deploy requires interactive mode for variable input (domain, API keys, etc.)
+
+## Full Workflow Example
+
+```bash
+# 1. Create project
+npx zeabur@latest project create -n "wrenai-prod" -r "hnd1" -i=false
+
+# 2. Get project ID
+PROJECT_ID=$(npx zeabur@latest project list -i=false 2>/dev/null | grep "wrenai-prod" | awk '{print $1}' | sed 's/\x1b\[[0-9;]*m//g')
+echo "Project ID: $PROJECT_ID"
+echo "Dashboard: https://zeabur.com/projects/$PROJECT_ID"
+
+# 3. Deploy template (interactive for variables)
+npx zeabur@latest template deploy -f template.yml --project-id $PROJECT_ID
+
+# 4. Set context for subsequent commands
+npx zeabur@latest context set project --id $PROJECT_ID -i=false -y
+```

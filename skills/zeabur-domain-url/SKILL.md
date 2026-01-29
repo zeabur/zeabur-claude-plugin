@@ -1,0 +1,41 @@
+---
+name: zeabur-domain-url
+description: Use when services need public URL for redirects or CORS. Use when WEB_URL or similar has trailing slash issues.
+---
+
+# Zeabur Domain URL Configuration
+
+## Symptom
+
+- Redirects go to wrong URL (missing domain suffix, or has trailing slash)
+- CORS errors due to URL mismatch
+- `${ZEABUR_WEB_URL}` has trailing slash causing path issues
+
+## System Variables
+
+| Variable | Example | Note |
+|----------|---------|------|
+| `ZEABUR_WEB_URL` | `https://app.zeabur.app/` | Has trailing slash |
+| `ZEABUR_WEB_DOMAIN` | `app.zeabur.app` | Domain only, no protocol |
+
+## Solution
+
+Expose URL from entry service to others:
+
+```yaml
+- name: entry-service
+  domainKey: PUBLIC_DOMAIN
+  spec:
+    env:
+      APP_URL:
+        default: https://${ZEABUR_WEB_DOMAIN}
+        expose: true
+
+- name: backend
+  spec:
+    env:
+      WEB_URL:
+        default: ${APP_URL}
+```
+
+**Use `https://${ZEABUR_WEB_DOMAIN}` not `${ZEABUR_WEB_URL}` to avoid trailing slash.**

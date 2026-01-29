@@ -1,0 +1,44 @@
+---
+name: zeabur-startup-order
+description: Use when service fails with Connection refused to database or redis. Use when API crashes because DB not ready.
+---
+
+# Zeabur Startup Order Issues
+
+## Symptom
+
+```
+Connection refused :5432
+connection to server at "X" failed
+OperationalError: connection failed
+```
+
+## Cause
+
+Service starts before dependency (DB/Redis) is ready.
+
+## Fix
+
+Add wait logic to service command:
+
+```yaml
+command:
+  - /bin/sh
+  - -c
+  - "python manage.py wait_for_db && exec ./entrypoint.sh"
+```
+
+Or for Node.js:
+```yaml
+command:
+  - /bin/sh
+  - -c
+  - "until nc -z postgres 5432; do sleep 1; done && node server.js"
+```
+
+## Quick Fix
+
+If DB is now ready, just restart the failed service:
+```bash
+npx zeabur@latest service restart --id <id> --env-id <env-id> -y
+```

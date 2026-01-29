@@ -1,0 +1,11 @@
+{
+  "name": "zeabur",
+  "description": "Zeabur CLI skills for deployment, template management, and troubleshooting",
+  "version": "1.0.0",
+  "author": {
+    "name": "Can"
+  },
+  "repository": "https://github.com/can/zeabur-claude-plugin",
+  "license": "MIT",
+  "keywords": ["zeabur", "deployment", "cli", "templates", "troubleshooting"]
+}

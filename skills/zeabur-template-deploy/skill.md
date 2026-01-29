@@ -1,0 +1,90 @@
+---
+name: zeabur-template-deploy
+description: Use when deploying Zeabur templates via CLI. Use when automating template deployments in non-interactive mode.
+---
+
+# Zeabur Template Deploy
+
+Deploy Zeabur templates via CLI with support for non-interactive mode.
+
+## Basic Usage
+
+```bash
+# Interactive mode (default)
+zeabur template deploy -f template.yaml
+
+# Non-interactive mode
+zeabur template deploy -i=false \
+  -f template.yaml \
+  --project-id <project-id> \
+  --var KEY1=value1 \
+  --var KEY2=value2
+```
+
+## Flags
+
+| Flag | Description |
+|------|-------------|
+| `-f, --file` | Template file (local path or URL) |
+| `--project-id` | Project ID to deploy on |
+| `--var` | Template variables (repeatable, e.g. `--var KEY=value`) |
+| `--skip-validation` | Skip template validation |
+| `-i=false` | Non-interactive mode |
+
+## Non-Interactive Mode
+
+When using `-i=false`, all required template variables must be provided via `--var` flags.
+
+If variables are missing, CLI shows helpful error:
+
+```
+Error: missing required variables in non-interactive mode:
+  --var PUBLIC_DOMAIN=<value>  (Enter your domain prefix)
+  --var DB_NAME=<value>  (Database name)
+```
+
+## Examples
+
+### Deploy with Variables
+
+```bash
+zeabur template deploy -i=false \
+  -f https://example.com/template.yaml \
+  --project-id abc123 \
+  --var PUBLIC_DOMAIN=myapp \
+  --var ADMIN_EMAIL=admin@example.com
+```
+
+### Mixed Mode (Interactive + Pre-filled)
+
+```bash
+# Pre-fill some variables, prompt for the rest
+zeabur template deploy \
+  -f template.yaml \
+  --var PUBLIC_DOMAIN=myapp
+```
+
+## Finding Required Variables
+
+Template variables are defined in `spec.variables` section of the YAML:
+
+```yaml
+spec:
+  variables:
+    - key: PUBLIC_DOMAIN
+      type: DOMAIN
+      name: Domain
+      description: Enter your domain prefix
+    - key: DB_NAME
+      type: STRING
+      name: Database Name
+      description: Database name
+```
+
+## Common Issues
+
+| Issue | Solution |
+|-------|----------|
+| Missing variables error | Add all required `--var` flags |
+| Variable with `${REF}` | Use literal value or set in Dashboard after deploy |
+| DOMAIN type validation | Domain availability checked automatically |
