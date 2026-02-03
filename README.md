@@ -1,0 +1,50 @@
+# Zeabur Claude Plugin
+
+Claude Code plugin for Zeabur CLI operations, deployment, and troubleshooting.
+
+## Installation
+
+Add to `~/.claude/plugins/config.json`:
+
+```json
+{
+  "repositories": {
+    "zeabur-local": {
+      "type": "local",
+      "path": "/path/to/zeabur-claude-plugin"
+    }
+  }
+}
+```
+
+Enable in `~/.claude/settings.json`:
+
+```json
+{
+  "enabledPlugins": {
+    "zeabur@zeabur-local": true
+  }
+}
+```
+
+## Skills
+
+| Skill | Description | Use When |
+|-------|-------------|----------|
+| `zeabur-context` | Configure Zeabur CLI project context | Commands return wrong project's services or context errors |
+| `zeabur-deployment-logs` | View and filter service logs | Checking logs or seeing env-id required errors |
+| `zeabur-domain-url` | Handle service domain and URL configuration | Services need public URLs or trailing slash issues |
+| `zeabur-migration` | Resolve database migration blocking issues | Service stuck "Waiting for migrations" |
+| `zeabur-port-mismatch` | Fix proxy connection issues from port mismatches | Proxy shows dial tcp timeout or connection refused |
+| `zeabur-project-create` | Create new Zeabur projects | Creating a new project or deploying templates |
+| `zeabur-restart` | Restart individual services | Restarting services or --env-id required error |
+| `zeabur-service-list` | List all services and get service IDs | Needing service IDs or checking existing services |
+| `zeabur-startup-order` | Fix connection errors from startup order | Service fails with connection refused to database/redis |
+| `zeabur-template-backup` | Backup templates to git repository | Saving a template locally with standardized format |
+| `zeabur-template-deploy` | Deploy templates via CLI | Automating template deployments |
+| `zeabur-update-service` | Update service config without full redeploy | Modifying env vars or updating single service |
+| `zeabur-variables` | Manage environment variables via CLI | Managing env vars or handling empty variable issues |
+
+## License
+
+MIT
