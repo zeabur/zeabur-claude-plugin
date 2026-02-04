@@ -9,7 +9,7 @@
   "plugins": [
     {
       "name": "zeabur",
-      "source": ".",
+      "source": "./",
       "description": "Zeabur CLI skills for deployment, template management, and troubleshooting"
     }
   ]
