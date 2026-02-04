@@ -4,27 +4,17 @@ Claude Code plugin for Zeabur CLI operations, deployment, and troubleshooting.
 
 ## Installation
 
-Add to `~/.claude/plugins/config.json`:
+In Claude Code, run:
 
-```json
-{
-  "repositories": {
-    "zeabur-local": {
-      "type": "local",
-      "path": "/path/to/zeabur-claude-plugin"
-    }
-  }
-}
+```
+/plugin marketplace add zeabur/zeabur-claude-plugin
+/plugin install zeabur@zeabur
 ```
 
-Enable in `~/.claude/settings.json`:
+Or test locally:
 
-```json
-{
-  "enabledPlugins": {
-    "zeabur@zeabur-local": true
-  }
-}
+```bash
+claude --plugin-dir /path/to/zeabur-claude-plugin
 ```
 
 ## Skills

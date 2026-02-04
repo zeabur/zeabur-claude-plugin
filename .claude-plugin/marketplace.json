@@ -1,0 +1,16 @@
+{
+  "name": "zeabur",
+  "owner": {
+    "name": "Zeabur"
+  },
+  "metadata": {
+    "description": "Zeabur CLI skills for deployment, template management, and troubleshooting"
+  },
+  "plugins": [
+    {
+      "name": "zeabur",
+      "source": ".",
+      "description": "Zeabur CLI skills for deployment, template management, and troubleshooting"
+    }
+  ]
+}
