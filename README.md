@@ -30,6 +30,7 @@ claude --plugin-dir /path/to/zeabur-claude-plugin
 | `zeabur-restart` | Restart individual services | Restarting services or --env-id required error |
 | `zeabur-service-list` | List all services and get service IDs | Needing service IDs or checking existing services |
 | `zeabur-startup-order` | Fix connection errors from startup order | Service fails with connection refused to database/redis |
+| `zeabur-template` | Template knowledge base for creating, validating, and troubleshooting | Creating or editing Zeabur template YAML, converting docker-compose |
 | `zeabur-template-backup` | Backup templates to git repository | Saving a template locally with standardized format |
 | `zeabur-template-deploy` | Deploy templates via CLI | Automating template deployments |
 | `zeabur-update-service` | Update service config without full redeploy | Modifying env vars or updating single service |
