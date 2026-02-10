@@ -53,8 +53,9 @@ Service does not listen on any HTTP port. Examples: chatbot gateways, background
 
 Add a lightweight HTTP health check server that runs in the background alongside the main process:
 
-```python
+```bash
 # Start before main process in startup script
+# IMPORTANT: port must match spec.ports[].port in your template
 python3 -c "
 from http.server import HTTPServer, BaseHTTPRequestHandler
 import json

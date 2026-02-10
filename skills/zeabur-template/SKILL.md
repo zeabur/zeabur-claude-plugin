@@ -149,10 +149,10 @@ spec:
 ## Quick Reference: YAML Gotchas
 
 ```yaml
-# ❌ WRONG — @ at start of value is a YAML reserved character (parse error)
+# ❌ RISKY — @ at start of value is a YAML reserved indicator (may cause parse errors in some parsers)
 description: @BotFather から取得した Telegram ボットトークン
 
-# ✅ CORRECT — quote the value or avoid @ at start
+# ✅ SAFE — quote the value or avoid @ at start
 description: "Token from @BotFather for Telegram bot"
 description: Telegram bot token from BotFather
 ```
@@ -171,32 +171,7 @@ If using an image with ENTRYPOINT, switch to a plain base image (e.g. `python:3.
 
 ## Quick Reference: Headless Services (no HTTP)
 
-If a service does NOT listen on any HTTP port (e.g. a chatbot gateway that only connects to external APIs), Zeabur proxy returns **502 Bad Gateway**.
-
-**Fix:** Add a lightweight health check server in the startup script:
-
-```yaml
-configs:
-  - path: /opt/app/startup.sh
-    permission: 493
-    envsubst: false
-    template: |
-      #!/bin/sh
-      set -e
-      python3 -c "
-      from http.server import HTTPServer, BaseHTTPRequestHandler
-      import json
-      class H(BaseHTTPRequestHandler):
-          def do_GET(self):
-              self.send_response(200)
-              self.send_header('Content-Type','application/json')
-              self.end_headers()
-              self.wfile.write(json.dumps({'status':'ok'}).encode())
-          def log_message(self,*a): pass
-      HTTPServer(('0.0.0.0',8080),H).serve_forever()
-      " &
-      exec my-headless-app
-```
+If a service does NOT listen on any HTTP port (502 Bad Gateway), see `zeabur-port-mismatch` skill for the fix.
 
 ## Quick Reference: Critical Rules
 
