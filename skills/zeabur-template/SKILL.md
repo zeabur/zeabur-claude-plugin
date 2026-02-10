@@ -58,6 +58,10 @@ spec:
       spec:
         source:
           image: image:tag
+          command:              # MUST be inside source, alongside image
+            - /bin/sh
+            - -c
+            - /opt/app/startup.sh
         ports:
           - id: web
             port: 8080
@@ -65,6 +69,13 @@ spec:
         volumes:
           - id: data
             dir: /path/to/data
+        configs:
+          - path: /opt/app/startup.sh
+            permission: 493     # 0755
+            envsubst: false
+            template: |
+              #!/bin/sh
+              exec node server.js
         env:
           VAR_NAME:
             default: value
@@ -108,6 +119,32 @@ localization:
 | `${[PORTID]_PORT}` | Port value by port ID (e.g. `${DATABASE_PORT}`) |
 | `${PORT_FORWARDED_HOSTNAME}` | External hostname (for `instructions`) |
 | `${[PORTID]_PORT_FORWARDED_PORT}` | External forwarded port (for `instructions`) |
+
+## Quick Reference: command Placement
+
+**IMPORTANT: `command` MUST be inside `source`, alongside `image`. NOT at `spec` level.**
+
+```yaml
+# ❌ WRONG — command at spec level (will be IGNORED, container uses default CMD)
+spec:
+  source:
+    image: python:3.12-slim
+  command:
+    - /bin/sh
+    - -c
+    - /opt/app/start.sh
+
+# ✅ CORRECT — command inside source
+spec:
+  source:
+    image: python:3.12-slim
+    command:
+      - /bin/sh
+      - -c
+      - /opt/app/start.sh
+```
+
+> **Note:** The external docs (REFERENCE.md, TROUBLESHOOTING.md) may show `command` at `spec` level. This is incorrect. Always place `command` inside `source` as confirmed by the JSON schema at `schema.zeabur.app/prebuilt.json`.
 
 ## Quick Reference: Critical Rules
 
@@ -278,5 +315,8 @@ POSTGRES_HOST:
 ## Deploy Command
 
 ```bash
-npx zeabur@latest template deploy -f zeabur-template-<service-name>.yaml
+npx zeabur@latest template deploy -i=false \
+  -f zeabur-template-<service-name>.yaml \
+  --project-id <project-id> \
+  --var KEY1=value1
 ```

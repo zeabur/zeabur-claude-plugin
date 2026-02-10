@@ -19,21 +19,28 @@ Service starts before dependency (DB/Redis) is ready.
 
 ## Fix
 
-Add wait logic to service command:
+Add wait logic to service command (command MUST be inside `source`):
 
 ```yaml
-command:
-  - /bin/sh
-  - -c
-  - "python manage.py wait_for_db && exec ./entrypoint.sh"
+# Python example
+spec:
+  source:
+    image: myapp:latest
+    command:
+      - /bin/sh
+      - -c
+      - "python manage.py wait_for_db && exec ./entrypoint.sh"
 ```
 
 Or for Node.js:
 ```yaml
-command:
-  - /bin/sh
-  - -c
-  - "until nc -z postgres 5432; do sleep 1; done && node server.js"
+spec:
+  source:
+    image: myapp:latest
+    command:
+      - /bin/sh
+      - -c
+      - "until nc -z postgres 5432; do sleep 1; done && node server.js"
 ```
 
 ## Quick Fix

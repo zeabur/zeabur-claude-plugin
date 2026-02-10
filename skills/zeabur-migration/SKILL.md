@@ -22,11 +22,14 @@ App expects migrations to run separately, but no migrator service exists.
 ### Option A: Add migration to API startup
 
 ```yaml
-# In api service
-command:
-  - /bin/sh
-  - -c
-  - "python manage.py wait_for_db && python manage.py migrate && exec ./entrypoint.sh"
+# In api service — command MUST be inside source
+spec:
+  source:
+    image: myapp:latest
+    command:
+      - /bin/sh
+      - -c
+      - "python manage.py wait_for_db && python manage.py migrate && exec ./entrypoint.sh"
 ```
 
 ### Option B: Add migrator service

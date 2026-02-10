@@ -16,7 +16,7 @@ Backup a Zeabur template to the local git repository with standardized naming.
 ## Repository Location
 
 ```
-/Users/can/Documents/github/zeabur-template/
+/Users/can/Documents/zeabur/zeabur-template/
 ```
 
 ## Naming Convention
@@ -84,7 +84,7 @@ Using browser automation:
 
 ```bash
 # Create directory
-mkdir -p /Users/can/Documents/github/zeabur-template/{service-name}
+mkdir -p /Users/can/Documents/zeabur/zeabur-template/{service-name}
 
 # Save YAML with naming pattern
 # zeabur-template-{service-name}-{TEMPLATE_CODE}.yaml
@@ -94,9 +94,7 @@ mkdir -p /Users/can/Documents/github/zeabur-template/{service-name}
 
 ```bash
 git add {service-name}/
-git commit -m "feat({service-name}): add {Template Name} template
-
-Co-Authored-By: Claude Opus 4.5 <noreply@anthropic.com>"
+git commit -m "feat({service-name}): add {Template Name} template"
 ```
 
 ### 6. Push (if requested)
