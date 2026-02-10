@@ -17,7 +17,7 @@ npx zeabur@latest context set project --id <project-id> -i=false -y
 npx zeabur@latest service list -i=false
 
 # 3. View logs (auto-selects single environment)
-npx zeabur@latest deployment log --service-id <service-id> -t runtime 2>&1 | tail -50
+npx zeabur@latest deployment log --service-id <service-id> -t runtime -i=false 2>&1 | tail -50
 ```
 
 Output will show: `INFO Only one environment in current project, select <production> automatically`
@@ -63,7 +63,8 @@ npx zeabur@latest deployment log \
 npx zeabur@latest deployment log \
   --service-id <id> \
   --env-id <env-id> \
-  -w
+  -w \
+  -i=false
 ```
 
 ## Tips

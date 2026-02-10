@@ -46,11 +46,13 @@ npx zeabur@latest context set project --id <project-id> -i=false -y
 ## Deploy Template to Project
 
 ```bash
-# Deploy template file to specific project
-npx zeabur@latest template deploy -f <template-file> --project-id <project-id>
+# Deploy template file to specific project (non-interactive)
+npx zeabur@latest template deploy -i=false \
+  -f <template-file> \
+  --project-id <project-id> \
+  --var PUBLIC_DOMAIN=myapp \
+  --var KEY=value
 ```
-
-**Note:** Template deploy requires interactive mode for variable input (domain, API keys, etc.)
 
 ## Full Workflow Example
 
@@ -63,8 +65,8 @@ PROJECT_ID=$(npx zeabur@latest project list -i=false 2>/dev/null | grep "wrenai-
 echo "Project ID: $PROJECT_ID"
 echo "Dashboard: https://zeabur.com/projects/$PROJECT_ID"
 
-# 3. Deploy template (interactive for variables)
-npx zeabur@latest template deploy -f template.yml --project-id $PROJECT_ID
+# 3. Deploy template (non-interactive)
+npx zeabur@latest template deploy -i=false -f template.yml --project-id $PROJECT_ID --var PUBLIC_DOMAIN=myapp
 
 # 4. Set context for subsequent commands
 npx zeabur@latest context set project --id $PROJECT_ID -i=false -y

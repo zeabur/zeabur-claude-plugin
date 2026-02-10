@@ -5,16 +5,13 @@ description: Use when deploying Zeabur templates via CLI. Use when automating te
 
 # Zeabur Template Deploy
 
-Deploy Zeabur templates via CLI with support for non-interactive mode.
+Deploy Zeabur templates via CLI. **Always use non-interactive mode (`-i=false`) in CLI automation.**
 
 ## Basic Usage
 
 ```bash
-# Interactive mode (default)
-zeabur template deploy -f template.yaml
-
-# Non-interactive mode
-zeabur template deploy -i=false \
+# Non-interactive mode (required for CLI automation)
+npx zeabur@latest template deploy -i=false \
   -f template.yaml \
   --project-id <project-id> \
   --var KEY1=value1 \
@@ -29,7 +26,7 @@ zeabur template deploy -i=false \
 | `--project-id` | Project ID to deploy on |
 | `--var` | Template variables (repeatable, e.g. `--var KEY=value`) |
 | `--skip-validation` | Skip template validation |
-| `-i=false` | Non-interactive mode |
+| `-i=false` | Non-interactive mode (always use this) |
 
 ## Non-Interactive Mode
 
@@ -48,19 +45,19 @@ Error: missing required variables in non-interactive mode:
 ### Deploy with Variables
 
 ```bash
-zeabur template deploy -i=false \
+npx zeabur@latest template deploy -i=false \
   -f https://example.com/template.yaml \
   --project-id abc123 \
   --var PUBLIC_DOMAIN=myapp \
   --var ADMIN_EMAIL=admin@example.com
 ```
 
-### Mixed Mode (Interactive + Pre-filled)
+### Deploy Local File
 
 ```bash
-# Pre-fill some variables, prompt for the rest
-zeabur template deploy \
-  -f template.yaml \
+npx zeabur@latest template deploy -i=false \
+  -f zeabur-template-myapp.yaml \
+  --project-id abc123 \
   --var PUBLIC_DOMAIN=myapp
 ```
 
@@ -85,6 +82,7 @@ spec:
 
 | Issue | Solution |
 |-------|----------|
+| Interactive prompt hangs | Always use `-i=false` with `--project-id` and `--var` flags |
 | Missing variables error | Add all required `--var` flags |
 | Variable with `${REF}` | Use literal value or set in Dashboard after deploy |
 | DOMAIN type validation | Domain availability checked automatically |
