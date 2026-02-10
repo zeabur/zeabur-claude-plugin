@@ -146,6 +146,33 @@ spec:
 
 > **Note:** The external docs (REFERENCE.md, TROUBLESHOOTING.md) may show `command` at `spec` level. This is incorrect. Always place `command` inside `source` as confirmed by the JSON schema at `schema.zeabur.app/prebuilt.json`.
 
+## Quick Reference: YAML Gotchas
+
+```yaml
+# ❌ RISKY — @ at start of value is a YAML reserved indicator (may cause parse errors in some parsers)
+description: @BotFather から取得した Telegram ボットトークン
+
+# ✅ SAFE — quote the value or avoid @ at start
+description: "Token from @BotFather for Telegram bot"
+description: Telegram bot token from BotFather
+```
+
+## Quick Reference: Docker Image ENTRYPOINT
+
+**Some base images have ENTRYPOINT set, which conflicts with `command`.**
+
+| Image | ENTRYPOINT | Problem |
+|-------|-----------|---------|
+| `ghcr.io/astral-sh/uv:python3.12-*` | `uv` | `command` becomes args to `uv`, container shows `uv help` and exits |
+| `node:*` | none | Safe to use |
+| `python:*` | none | Safe to use |
+
+If using an image with ENTRYPOINT, switch to a plain base image (e.g. `python:3.12-slim-bookworm`) or one without ENTRYPOINT.
+
+## Quick Reference: Headless Services (no HTTP)
+
+If a service does NOT listen on any HTTP port (502 Bad Gateway), see `zeabur-port-mismatch` skill for the fix.
+
 ## Quick Reference: Critical Rules
 
 ```yaml

@@ -38,3 +38,35 @@ ports:
 ```
 
 **Check official Dockerfile for `EXPOSE` directive.**
+
+## Headless Service (502 with no listener)
+
+### Symptom
+
+Service is running (no crash), but proxy returns **502 Bad Gateway** permanently.
+
+### Cause
+
+Service does not listen on any HTTP port. Examples: chatbot gateways, background workers, message queue consumers. The template declares an HTTP port but nothing binds to it.
+
+### Fix
+
+Add a lightweight HTTP health check server that runs in the background alongside the main process:
+
+```bash
+# Start before main process in startup script
+# IMPORTANT: port must match spec.ports[].port in your template
+python3 -c "
+from http.server import HTTPServer, BaseHTTPRequestHandler
+import json
+class H(BaseHTTPRequestHandler):
+    def do_GET(self):
+        self.send_response(200)
+        self.send_header('Content-Type','application/json')
+        self.end_headers()
+        self.wfile.write(json.dumps({'status':'ok'}).encode())
+    def log_message(self,*a): pass
+HTTPServer(('0.0.0.0', 8080), H).serve_forever()
+" &
+exec my-headless-app
+```
