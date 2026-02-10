@@ -146,6 +146,58 @@ spec:
 
 > **Note:** The external docs (REFERENCE.md, TROUBLESHOOTING.md) may show `command` at `spec` level. This is incorrect. Always place `command` inside `source` as confirmed by the JSON schema at `schema.zeabur.app/prebuilt.json`.
 
+## Quick Reference: YAML Gotchas
+
+```yaml
+# ❌ WRONG — @ at start of value is a YAML reserved character (parse error)
+description: @BotFather から取得した Telegram ボットトークン
+
+# ✅ CORRECT — quote the value or avoid @ at start
+description: "Token from @BotFather for Telegram bot"
+description: Telegram bot token from BotFather
+```
+
+## Quick Reference: Docker Image ENTRYPOINT
+
+**Some base images have ENTRYPOINT set, which conflicts with `command`.**
+
+| Image | ENTRYPOINT | Problem |
+|-------|-----------|---------|
+| `ghcr.io/astral-sh/uv:python3.12-*` | `uv` | `command` becomes args to `uv`, container shows `uv help` and exits |
+| `node:*` | none | Safe to use |
+| `python:*` | none | Safe to use |
+
+If using an image with ENTRYPOINT, switch to a plain base image (e.g. `python:3.12-slim-bookworm`) or one without ENTRYPOINT.
+
+## Quick Reference: Headless Services (no HTTP)
+
+If a service does NOT listen on any HTTP port (e.g. a chatbot gateway that only connects to external APIs), Zeabur proxy returns **502 Bad Gateway**.
+
+**Fix:** Add a lightweight health check server in the startup script:
+
+```yaml
+configs:
+  - path: /opt/app/startup.sh
+    permission: 493
+    envsubst: false
+    template: |
+      #!/bin/sh
+      set -e
+      python3 -c "
+      from http.server import HTTPServer, BaseHTTPRequestHandler
+      import json
+      class H(BaseHTTPRequestHandler):
+          def do_GET(self):
+              self.send_response(200)
+              self.send_header('Content-Type','application/json')
+              self.end_headers()
+              self.wfile.write(json.dumps({'status':'ok'}).encode())
+          def log_message(self,*a): pass
+      HTTPServer(('0.0.0.0',8080),H).serve_forever()
+      " &
+      exec my-headless-app
+```
+
 ## Quick Reference: Critical Rules
 
 ```yaml

@@ -5,9 +5,18 @@ description: Use when viewing service logs fails with env-id required error. Use
 
 # Zeabur Deployment Logs
 
-## Quick Start (Single Environment Projects)
+## Important: Always Use --env-id
 
-If the project has only one environment (most common case), the CLI auto-selects it:
+`deployment log` often requires `--env-id` even for single-environment projects (unlike `variable list` which auto-selects). **Always get the env-id first and pass it explicitly.**
+
+### Symptom
+
+```
+ERROR: when deployment-id is not specified, env-id is required
+ERROR: environment is required
+```
+
+## Workflow
 
 ```bash
 # 1. Set project context
@@ -16,19 +25,10 @@ npx zeabur@latest context set project --id <project-id> -i=false -y
 # 2. Get service ID
 npx zeabur@latest service list -i=false
 
-# 3. View logs (auto-selects single environment)
-npx zeabur@latest deployment log --service-id <service-id> -t runtime -i=false 2>&1 | tail -50
-```
+# 3. Get env-id (see methods below)
 
-Output will show: `INFO Only one environment in current project, select <production> automatically`
-
-## Multi-Environment Projects (requires env-id)
-
-### Symptom
-
-```
-ERROR: when deployment-id is not specified, env-id is required
-ERROR: environment is required
+# 4. View logs with env-id
+npx zeabur@latest deployment log --service-id <service-id> --env-id <env-id> -t runtime -i=false 2>&1 | tail -50
 ```
 
 ### Get env-id
