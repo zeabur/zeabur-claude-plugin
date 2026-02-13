@@ -5,13 +5,13 @@ description: Use when backing up a Zeabur template to git. Use when user provide
 
 # Zeabur Template Backup
 
-Backup a Zeabur template to the local git repository with standardized naming.
+Backup an online Zeabur template to the local git repository with standardized naming.
 
 ## When to Use
 
 - User provides a Zeabur template URL (e.g., `https://zeabur.com/templates/85IQXQ`)
 - User asks to backup/save a Zeabur template
-- User wants to create a local copy of a Zeabur template
+- User wants to create a local copy of an online Zeabur template
 
 ## Repository Location
 
@@ -30,49 +30,41 @@ Backup a Zeabur template to the local git repository with standardized naming.
 - `dify/zeabur-template-dify-1D4DOW.yaml`
 - `postiz/zeabur-template-postiz-v2.12-X2L3BE.yaml`
 
-## Workflow
+## How to Download Template YAML
 
-```dot
-digraph backup_flow {
-    rankdir=TB;
+Zeabur templates can be directly downloaded by appending `.yaml` to the template URL:
 
-    "Receive template URL" [shape=box];
-    "Navigate to template page" [shape=box];
-    "Extract template name & code" [shape=box];
-    "Click 查看來源文件" [shape=box];
-    "Get YAML content" [shape=box];
-    "Create directory" [shape=box];
-    "Save YAML file" [shape=box];
-    "Git commit" [shape=box];
-    "Push if requested" [shape=diamond];
-    "Done" [shape=doublecircle];
+```
+https://zeabur.com/templates/{TEMPLATE_CODE}.yaml
+```
 
-    "Receive template URL" -> "Navigate to template page";
-    "Navigate to template page" -> "Extract template name & code";
-    "Extract template name & code" -> "Click 查看來源文件";
-    "Click 查看來源文件" -> "Get YAML content";
-    "Get YAML content" -> "Create directory";
-    "Create directory" -> "Save YAML file";
-    "Save YAML file" -> "Git commit";
-    "Git commit" -> "Push if requested";
-    "Push if requested" -> "Done" [label="yes/no"];
-}
+**Example:**
+- Template page: `https://zeabur.com/templates/1D4DOW`
+- YAML download: `https://zeabur.com/templates/1D4DOW.yaml`
+
+Use `curl` to download:
+
+```bash
+curl -sL https://zeabur.com/templates/{TEMPLATE_CODE}.yaml -o output.yaml
 ```
 
 ## Step-by-Step
 
-### 1. Extract Template Info from URL
+### 1. Extract Template Code from URL
 
 URL format: `https://zeabur.com/templates/{TEMPLATE_CODE}`
 
 Example: `https://zeabur.com/templates/85IQXQ` → Code is `85IQXQ`
 
-### 2. Navigate and Get Template Details
+### 2. Download YAML and Extract Template Name
 
-Using browser automation:
-1. Navigate to the template URL
-2. Read the template name from the page title
-3. Find and click "查看來源文件" link to get YAML
+```bash
+# Download YAML
+curl -sL https://zeabur.com/templates/{TEMPLATE_CODE}.yaml -o /tmp/template.yaml
+
+# Extract template name from YAML metadata.name field
+grep -A1 'metadata:' /tmp/template.yaml | grep 'name:' | head -1
+```
 
 ### 3. Derive Service Name
 
@@ -83,16 +75,19 @@ Using browser automation:
 ### 4. Create Directory and Save
 
 ```bash
-# Create directory
-mkdir -p /Users/can/Documents/zeabur/zeabur-template/{service-name}
+REPO=/Users/can/Documents/zeabur/zeabur-template
 
-# Save YAML with naming pattern
-# zeabur-template-{service-name}-{TEMPLATE_CODE}.yaml
+# Create directory
+mkdir -p $REPO/{service-name}
+
+# Move YAML with naming pattern
+mv /tmp/template.yaml $REPO/{service-name}/zeabur-template-{service-name}-{TEMPLATE_CODE}.yaml
 ```
 
 ### 5. Git Commit
 
 ```bash
+cd $REPO
 git add {service-name}/
 git commit -m "feat({service-name}): add {Template Name} template"
 ```
@@ -107,19 +102,18 @@ git push
 
 | Step | Action |
 |------|--------|
-| 1 | Get template URL from user |
-| 2 | Navigate to URL with browser |
-| 3 | Extract template name and code |
-| 4 | Click "查看來源文件" for YAML |
-| 5 | Create service directory |
-| 6 | Save YAML with proper naming |
-| 7 | Git commit with conventional format |
-| 8 | Push if user requests |
+| 1 | Extract template code from URL |
+| 2 | Download YAML via `curl -sL .../{CODE}.yaml` |
+| 3 | Read template name from YAML `metadata.name` |
+| 4 | Derive kebab-case service name |
+| 5 | Save to `{service-name}/zeabur-template-{service-name}-{CODE}.yaml` |
+| 6 | Git commit with conventional format |
+| 7 | Push if user requests |
 
 ## Common Issues
 
 | Issue | Solution |
 |-------|----------|
-| YAML has extra text at end | Clean up browser UI text before saving |
+| curl returns HTML instead of YAML | Verify the template code is correct |
 | Template name has special chars | Use simple kebab-case for directory |
-| Already exists | Check if update needed or use different name |
+| Already exists | Compare with existing file, update if needed |
