@@ -43,6 +43,19 @@ npx zeabur@latest context set project --id <project-id> -i=false -y
 | Frankfurt | `fra1` |
 | São Paulo | `gru1` |
 
+## Dedicated Server
+
+To create a project on a dedicated server, pass the server ID as the region:
+
+```bash
+npx zeabur@latest project create -n "my-app" -r "server-<server-id>" -i=false
+
+# Example
+npx zeabur@latest project create -n "my-app" -r "server-6981ecae2a96ae7705ff2537" -i=false
+```
+
+> Some templates (e.g. with `REQUIRE_DEDICATED_SERVER`) can only be deployed on dedicated servers. If you get `Unsupported template (code: REQUIRE_DEDICATED_SERVER)`, recreate the project with a dedicated server region.
+
 ## Deploy Template to Project
 
 ```bash
